@@ -1,0 +1,7 @@
+on: [push]
+
+jobs:
+  linux:
+    runs-on: ubuntu-latest-xl
+    steps:
+      - run: lscpu
