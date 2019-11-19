@@ -81,6 +81,9 @@ pub enum Subcommand {
     Install {
         paths: Vec<PathBuf>,
     },
+    Run {
+        paths: Vec<PathBuf>,
+    },
 }
 
 impl Default for Subcommand {
@@ -108,6 +111,7 @@ Subcommands:
     clean       Clean out build directories
     dist        Build distribution artifacts
     install     Install distribution artifacts
+    run         Run tools contained in this repository
 
 To learn more about a subcommand, run `./x.py <subcommand> -h`"
         );
@@ -166,6 +170,7 @@ To learn more about a subcommand, run `./x.py <subcommand> -h`"
                 || (s == "clean")
                 || (s == "dist")
                 || (s == "install")
+                || (s == "run")
         });
         let subcommand = match subcommand {
             Some(s) => s,
@@ -364,6 +369,18 @@ Arguments:
         ./x.py doc --stage 1",
                 );
             }
+            "run" => {
+                subcommand_help.push_str(
+                    "\n
+Arguments:
+    This subcommand accepts a number of paths to tools to build and run. For
+    example:
+
+        ./x.py run src/tool/expand-yaml-anchors
+
+    At least a tool needs to be called.",
+                );
+            }
             _ => {}
         };
         // Get any optional paths which occur after the subcommand
@@ -441,6 +458,13 @@ Arguments:
             }
             "dist" => Subcommand::Dist { paths },
             "install" => Subcommand::Install { paths },
+            "run" => {
+                if paths.is_empty() {
+                    println!("\nrun requires at least a path!\n");
+                    usage(1, &opts, &subcommand_help, &extra_help);
+                }
+                Subcommand::Run { paths }
+            },
             _ => {
                 usage(1, &opts, &subcommand_help, &extra_help);
             }
