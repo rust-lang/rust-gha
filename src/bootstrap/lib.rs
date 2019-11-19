@@ -147,6 +147,7 @@ mod builder;
 mod cache;
 mod tool;
 mod toolstate;
+mod run;
 
 #[cfg(windows)]
 mod job;
