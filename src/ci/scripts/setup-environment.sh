@@ -8,6 +8,16 @@ IFS=$'\n\t'
 
 source "$(cd "$(dirname "$0")" && pwd)/../shared.sh"
 
+# Load extra environment variables
+vars="${EXTRA_VARIABLES-}"
+echo "${vars}" | jq '' >/dev/null  # Validate JSON and exit on errors
+for key in $(echo "${vars}" | jq "keys[]" -r); do
+    echo "adding extra environment variable ${key}"
+    value="$(echo "${vars}" | jq ".${key}" -r)"
+    export "${key}"="${value}"
+    ciCommandSetEnv "${key}" "${value}"
+done
+
 # Builders starting with `dist-` are dist builders, but if they also end with
 # `-alt` they are alternate dist builders.
 if [[ "${CI_JOB_NAME}" = dist-* ]]; then

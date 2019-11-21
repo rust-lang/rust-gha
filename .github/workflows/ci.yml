@@ -27,6 +27,9 @@ name: CI
 jobs:
   pr:
     name: PR
+    env:
+      SCCACHE_BUCKET: rust-lang-gha-caches
+      CI_JOB_NAME: "${{ matrix.name }}"
     if: "github.event_name == 'pull_request'"
     strategy:
       matrix:
@@ -47,12 +50,7 @@ jobs:
             os: ubuntu-latest-xl
     timeout-minutes: 600
     runs-on: "${{ matrix.os }}"
-    env: "${{ matrix.env }}"
     steps:
-      - name: set the CI_JOB_NAME environment variable
-        run: "echo \"::set-env name=CI_JOB_NAME::${{ matrix.name }}\""
-        shell: bash
-        if: success() && !env.SKIP_JOB
       - name: configure GitHub Actions to kill the build when outdated
         uses: rust-lang/simpleinfra/github-actions/cancel-outdated-builds@master
         with:
@@ -69,6 +67,8 @@ jobs:
         if: success() && !env.SKIP_JOB
       - name: add extra enviornment variables
         run: src/ci/scripts/setup-environment.sh
+        env:
+          EXTRA_VARIABLES: "${{ toJson(matrix.env) }}"
         shell: bash
         if: success() && !env.SKIP_JOB
       - name: decide whether to skip this job
@@ -164,6 +164,9 @@ jobs:
         shell: bash
   try:
     name: try
+    env:
+      SCCACHE_BUCKET: rust-lang-gha-caches
+      CI_JOB_NAME: "${{ matrix.name }}"
     if: "github.event_name == 'push' && github.ref == 'refs/heads/try'"
     strategy:
       matrix:
@@ -180,12 +183,7 @@ jobs:
             os: ubuntu-latest-xl
     timeout-minutes: 600
     runs-on: "${{ matrix.os }}"
-    env: "${{ matrix.env }}"
     steps:
-      - name: set the CI_JOB_NAME environment variable
-        run: "echo \"::set-env name=CI_JOB_NAME::${{ matrix.name }}\""
-        shell: bash
-        if: success() && !env.SKIP_JOB
       - name: configure GitHub Actions to kill the build when outdated
         uses: rust-lang/simpleinfra/github-actions/cancel-outdated-builds@master
         with:
@@ -202,6 +200,8 @@ jobs:
         if: success() && !env.SKIP_JOB
       - name: add extra enviornment variables
         run: src/ci/scripts/setup-environment.sh
+        env:
+          EXTRA_VARIABLES: "${{ toJson(matrix.env) }}"
         shell: bash
         if: success() && !env.SKIP_JOB
       - name: decide whether to skip this job
@@ -298,6 +298,8 @@ jobs:
   master:
     name: master
     runs-on: ubuntu-latest
+    env:
+      SCCACHE_BUCKET: rust-lang-gha-caches
     if: "github.event_name == 'push' && github.ref == 'refs/heads/master'"
     steps:
       - name: checkout the source code
