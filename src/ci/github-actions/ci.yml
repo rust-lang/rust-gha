@@ -36,16 +36,21 @@ x--expand-yaml-anchors--remove:
 
   - &public-variables
     SCCACHE_BUCKET: rust-lang-gha-caches
+    TOOLSTATE_REPO: https://github.com/pietroalbini/rust-toolstate
 
   - &prod-variables
     SCCACHE_BUCKET: rust-lang-gha-caches
-
-  # TODO: name aws secret AWS_SECRET_ACCESS_KEY_<KEYID> and try dynamically
-  # fetching it.
-  #
-  # secrets[format("AWS_SECRET_ACCESS_KEY_{0}", env.UPLOAD_AWS_ACCESS_KEY_ID)]
-  #
-  # Hopefully it works.
+    DEPLOY_BUCKET: rust-lang-gha
+    TOOLSTATE_REPO: https://github.com/pietroalbini/rust-toolstate
+    TOOLSTATE_ISSUES_API_URL: https://api.github.com/repos/pietroalbini/rust-toolstate/issues
+    TOOLSTATE_PUBLISH: 1
+    # AWS_SECRET_ACCESS_KEYs are stored in GitHub's secrets storage, named
+    # AWS_SECRET_ACCESS_KEY_<keyid>. Including the key id in the name allows to
+    # rotate them in a single branch while keeping the old key in another
+    # branch, which wouldn't be possible if the key was named with the kind
+    # (caches, artifacts...).
+    CACHES_AWS_ACCESS_KEY_ID: AKIA46X5W6CZOMUQATD5
+    ARTIFACTS_AWS_ACCESS_KEY_ID: AKIA46X5W6CZH5AYXDVF
 
   - &base-job
     env: {}
@@ -184,16 +189,16 @@ x--expand-yaml-anchors--remove:
       - name: run the build
         run: src/ci/scripts/run-build-from-ci.sh
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.SCCACHE_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.SCCACHE_AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ env.CACHES_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.CACHES_AWS_ACCESS_KEY_ID)] }}
           TOOLSTATE_REPO_ACCESS_TOKEN: ${{ secrets.TOOLSTATE_REPO_ACCESS_TOKEN }}
         <<: *step-run
 
       - name: upload artifacts to S3
         run: src/ci/scripts/upload-artifacts.sh
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.UPLOAD_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.UPLOAD_AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ env.ARTIFACTS_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.ARTIFACTS_AWS_ACCESS_KEY_ID)] }}
         # Adding a condition on DEPLOY=1 or DEPLOY_ALT=1 is not needed as all deploy
         # builders *should* have the AWS credentials available. Still, explicitly
         # adding the condition is helpful as this way CI will not silently skip
