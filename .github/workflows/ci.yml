@@ -3,11 +3,7 @@ jobs:
   repro:
     strategy:
       matrix:
-        name:
-          - foo
-        include:
-          - name: bar
-            os: ubuntu-latest
+        foo: [bar]
     runs-on: "${{ matrix.os }}"
     steps:
       - run: echo bug
