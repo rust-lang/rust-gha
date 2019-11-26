@@ -33,6 +33,7 @@ x--expand-yaml-anchors--remove:
 
   - &shared-ci-variables
     CI_JOB_NAME: ${{ matrix.name }}
+    CI_SHELL: bash
 
   - &public-variables
     SCCACHE_BUCKET: rust-lang-gha-caches
@@ -74,11 +75,7 @@ x--expand-yaml-anchors--remove:
 
   - &step-run
     <<: *step
-    shell: bash
-
-  - &step-run-custom-msys
-    <<: *step-run
-    shell: ${{ matrix.custom_msys }}
+    shell: ${{ env.CI_SHELL }}
 
   - &base-ci-job
     timeout-minutes: 600
@@ -161,11 +158,11 @@ x--expand-yaml-anchors--remove:
 
       - name: install MSYS2 packages
         run: src/ci/scripts/install-msys2-packages.sh
-        <<: *step-run-custom-msys
+        <<: *step-run
 
       - name: install MinGW
         run: src/ci/scripts/install-mingw.sh
-        <<: *step-run-custom-msys
+        <<: *step-run
 
       - name: install ninja
         run: src/ci/scripts/install-ninja.sh
@@ -198,7 +195,7 @@ x--expand-yaml-anchors--remove:
           AWS_ACCESS_KEY_ID: ${{ env.CACHES_AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.CACHES_AWS_ACCESS_KEY_ID)] }}
           TOOLSTATE_REPO_ACCESS_TOKEN: ${{ secrets.TOOLSTATE_REPO_ACCESS_TOKEN }}
-        <<: *step-run-custom-msys
+        <<: *step-run
 
       - name: upload artifacts to S3
         run: src/ci/scripts/upload-artifacts.sh
