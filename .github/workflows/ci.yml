@@ -42,13 +42,16 @@ jobs:
           - name: mingw-check
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu-llvm-6.0
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu-tools
             env:
               CI_ONLY_WHEN_SUBMODULES_CHANGED: 1
             os: ubuntu-latest-xl
+            custom_msys: /bin/bash
     timeout-minutes: 600
     runs-on: "${{ matrix.os }}"
     steps:
@@ -122,11 +125,11 @@ jobs:
         if: success() && !env.SKIP_JOB
       - name: install MSYS2 packages
         run: src/ci/scripts/install-msys2-packages.sh
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: install MinGW
         run: src/ci/scripts/install-mingw.sh
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: install ninja
         run: src/ci/scripts/install-ninja.sh
@@ -154,7 +157,7 @@ jobs:
           AWS_ACCESS_KEY_ID: "${{ env.CACHES_AWS_ACCESS_KEY_ID }}"
           AWS_SECRET_ACCESS_KEY: "${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.CACHES_AWS_ACCESS_KEY_ID)] }}"
           TOOLSTATE_REPO_ACCESS_TOKEN: "${{ secrets.TOOLSTATE_REPO_ACCESS_TOKEN }}"
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: upload artifacts to S3
         run: src/ci/scripts/upload-artifacts.sh
@@ -184,10 +187,12 @@ jobs:
           - name: dist-x86_64-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-x86_64-linux-alt
             env:
               IMAGE: dist-x86_64-linux
             os: ubuntu-latest-xl
+            custom_msys: /bin/bash
     timeout-minutes: 600
     runs-on: "${{ matrix.os }}"
     steps:
@@ -261,11 +266,11 @@ jobs:
         if: success() && !env.SKIP_JOB
       - name: install MSYS2 packages
         run: src/ci/scripts/install-msys2-packages.sh
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: install MinGW
         run: src/ci/scripts/install-mingw.sh
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: install ninja
         run: src/ci/scripts/install-ninja.sh
@@ -293,7 +298,7 @@ jobs:
           AWS_ACCESS_KEY_ID: "${{ env.CACHES_AWS_ACCESS_KEY_ID }}"
           AWS_SECRET_ACCESS_KEY: "${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.CACHES_AWS_ACCESS_KEY_ID)] }}"
           TOOLSTATE_REPO_ACCESS_TOKEN: "${{ secrets.TOOLSTATE_REPO_ACCESS_TOKEN }}"
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: upload artifacts to S3
         run: src/ci/scripts/upload-artifacts.sh
@@ -376,120 +381,158 @@ jobs:
           - name: arm-android
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: armhf-gnu
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-aarch64-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-android
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-arm-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-armhf-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-armv7-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-i586-gnu-i586-i686-musl
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-i686-freebsd
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-i686-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-mips-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-mips64-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-mips64el-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-mipsel-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-powerpc-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-powerpc64-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-powerpc64le-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-s390x-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-various-1
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-various-2
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-x86_64-freebsd
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-x86_64-linux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-x86_64-linux-alt
             env:
               IMAGE: dist-x86_64-linux
             os: ubuntu-latest-xl
+            custom_msys: /bin/bash
           - name: dist-x86_64-musl
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: dist-x86_64-netbsd
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: i686-gnu
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: i686-gnu-nopt
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: mingw-check
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: test-various
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: wasm32
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu-aux
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu-debug
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu-distcheck
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu-full-bootstrap
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu-llvm-6.0
             env:
               RUST_BACKTRACE: 1
             os: ubuntu-latest-xl
+            custom_msys: /bin/bash
           - name: x86_64-gnu-nopt
             os: ubuntu-latest-xl
             env: {}
+            custom_msys: /bin/bash
           - name: x86_64-gnu-tools
             env:
               DEPLOY_TOOLSTATES_JSON: toolstates-linux.json
             os: ubuntu-latest-xl
+            custom_msys: /bin/bash
           - name: x86_64-msvc-1
             env:
               RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --enable-profiler"
@@ -497,11 +540,13 @@ jobs:
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: x86_64-msvc-2
             env:
               RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --enable-profiler"
               SCRIPT: make ci-subset-2
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: i686-msvc-1
             env:
               RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-msvc"
@@ -509,6 +554,7 @@ jobs:
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: i686-msvc-2
             env:
               RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-msvc"
@@ -516,11 +562,13 @@ jobs:
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: x86_64-msvc-aux
             env:
               RUST_CHECK_TARGET: check-aux EXCLUDE_CARGO=1
               RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc"
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: x86_64-msvc-cargo
             env:
               SCRIPT: python x.py test src/tools/cargotest src/tools/cargo
@@ -529,11 +577,13 @@ jobs:
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: x86_64-msvc-tools
             env:
               SCRIPT: src/ci/docker/x86_64-gnu-tools/checktools.sh x.py /tmp/toolstate/toolstates.json windows
               RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --save-toolstates=/tmp/toolstate/toolstates.json"
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: i686-mingw-1
             env:
               RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-gnu"
@@ -542,12 +592,14 @@ jobs:
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: i686-mingw-2
             env:
               RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-gnu"
               SCRIPT: make ci-mingw-subset-2
               CUSTOM_MINGW: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: x86_64-mingw-1
             env:
               SCRIPT: make ci-mingw-subset-1
@@ -556,24 +608,28 @@ jobs:
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: x86_64-mingw-2
             env:
               SCRIPT: make ci-mingw-subset-2
               RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-gnu"
               CUSTOM_MINGW: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: dist-x86_64-msvc
             env:
               RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --target=x86_64-pc-windows-msvc,aarch64-pc-windows-msvc --enable-full-tools --enable-profiler"
               SCRIPT: python x.py dist
               DIST_REQUIRE_ALL_TOOLS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: dist-i686-msvc
             env:
               RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-msvc --target=i586-pc-windows-msvc --enable-full-tools --enable-profiler"
               SCRIPT: python x.py dist
               DIST_REQUIRE_ALL_TOOLS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: dist-i686-mingw
             env:
               RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-gnu --enable-full-tools --enable-profiler"
@@ -581,6 +637,7 @@ jobs:
               CUSTOM_MINGW: 1
               DIST_REQUIRE_ALL_TOOLS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: dist-x86_64-mingw
             env:
               SCRIPT: python x.py dist
@@ -588,11 +645,13 @@ jobs:
               CUSTOM_MINGW: 1
               DIST_REQUIRE_ALL_TOOLS: 1
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
           - name: dist-x86_64-msvc-alt
             env:
               RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --enable-extended --enable-profiler"
               SCRIPT: python x.py dist
             os: windows-latest-xl
+            custom_msys: "${{ format(\"{}/msys2/usr/bin/bash.exe\", env.GITHUB_WORKSPACE) }}"
     timeout-minutes: 600
     runs-on: "${{ matrix.os }}"
     steps:
@@ -666,11 +725,11 @@ jobs:
         if: success() && !env.SKIP_JOB
       - name: install MSYS2 packages
         run: src/ci/scripts/install-msys2-packages.sh
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: install MinGW
         run: src/ci/scripts/install-mingw.sh
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: install ninja
         run: src/ci/scripts/install-ninja.sh
@@ -698,7 +757,7 @@ jobs:
           AWS_ACCESS_KEY_ID: "${{ env.CACHES_AWS_ACCESS_KEY_ID }}"
           AWS_SECRET_ACCESS_KEY: "${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.CACHES_AWS_ACCESS_KEY_ID)] }}"
           TOOLSTATE_REPO_ACCESS_TOKEN: "${{ secrets.TOOLSTATE_REPO_ACCESS_TOKEN }}"
-        shell: bash
+        shell: "${{ matrix.custom_msys }}"
         if: success() && !env.SKIP_JOB
       - name: upload artifacts to S3
         run: src/ci/scripts/upload-artifacts.sh
