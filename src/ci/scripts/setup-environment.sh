@@ -8,6 +8,22 @@ IFS=$'\n\t'
 
 source "$(cd "$(dirname "$0")" && pwd)/../shared.sh"
 
+# Load extra environment variables
+vars="${EXTRA_VARIABLES-}"
+echo "${vars}" | jq '' >/dev/null  # Validate JSON and exit on errors
+for key in $(echo "${vars}" | jq "keys[]" -r); do
+    # On Windows, for whatever reason, $key contains the BOM character in it,
+    # and that messes up `jq ".${key}"`. This line strips the BOM from the key.
+    #
+    # https://unix.stackexchange.com/a/381263
+    key="$(echo "${key}" | sed '1s/^\xEF\xBB\xBF//')"
+
+    echo "adding extra environment variable ${key}"
+    value="$(echo "${vars}" | jq ".${key}" -r)"
+    export "${key}"="${value}"
+    ciCommandSetEnv "${key}" "${value}"
+done
+
 # Builders starting with `dist-` are dist builders, but if they also end with
 # `-alt` they are alternate dist builders.
 if [[ "${CI_JOB_NAME}" = dist-* ]]; then
