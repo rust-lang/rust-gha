@@ -29,7 +29,6 @@ jobs:
     name: PR
     env:
       CI_JOB_NAME: "${{ matrix.name }}"
-      CI_OVERRIDE_SHELL: bash
       SCCACHE_BUCKET: rust-lang-gha-caches
       TOOLSTATE_REPO: "https://github.com/pietroalbini/rust-toolstate"
     if: "github.event_name == 'pull_request'"
@@ -65,7 +64,156 @@ jobs:
         with:
           github_token: "${{ secrets.github_token }}"
         if: success() && !env.SKIP_JOB
-      - name: add extra enviornment variables
+      - name: add extra environment variables
+        run: src/ci/scripts/setup-environment.sh
+        env:
+          EXTRA_VARIABLES: "${{ toJson(matrix.env) }}"
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: decide whether to skip this job
+        run: src/ci/scripts/should-skip-this.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: collect CPU statistics
+        run: src/ci/scripts/collect-cpu-stats.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: show the current environment
+        run: src/ci/scripts/dump-environment.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install awscli
+        run: src/ci/scripts/install-awscli.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install sccache
+        run: src/ci/scripts/install-sccache.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install clang
+        run: src/ci/scripts/install-clang.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: switch xcode version
+        run: src/ci/scripts/switch-xcode.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install WIX
+        run: src/ci/scripts/install-wix.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install InnoSetup
+        run: src/ci/scripts/install-innosetup.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: "ensure builds happens inside of C: instead of D:"
+        run: src/ci/scripts/windows-symlink-build-dir.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: disable git crlf conversion
+        run: src/ci/scripts/disable-git-crlf-conversion.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install MSYS2
+        run: src/ci/scripts/install-msys2.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install MSYS2 packages
+        run: src/ci/scripts/install-msys2-packages.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install MinGW
+        run: src/ci/scripts/install-mingw.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: install ninja
+        run: src/ci/scripts/install-ninja.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: enable ipv6 on Docker
+        run: src/ci/scripts/enable-docker-ipv6.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: disable git crlf conversion
+        run: src/ci/scripts/disable-git-crlf-conversion.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: checkout submodules
+        run: src/ci/scripts/checkout-submodules.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: ensure line endings are correct
+        run: src/ci/scripts/verify-line-endings.sh
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: run the build
+        run: src/ci/scripts/run-build-from-ci.sh
+        env:
+          AWS_ACCESS_KEY_ID: "${{ env.CACHES_AWS_ACCESS_KEY_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.CACHES_AWS_ACCESS_KEY_ID)] }}"
+          TOOLSTATE_REPO_ACCESS_TOKEN: "${{ secrets.TOOLSTATE_REPO_ACCESS_TOKEN }}"
+        shell: "python src/ci/scripts/exec.py {0}"
+        if: success() && !env.SKIP_JOB
+      - name: upload artifacts to S3
+        run: src/ci/scripts/upload-artifacts.sh
+        env:
+          AWS_ACCESS_KEY_ID: "${{ env.ARTIFACTS_AWS_ACCESS_KEY_ID }}"
+          AWS_SECRET_ACCESS_KEY: "${{ secrets[format('AWS_SECRET_ACCESS_KEY_{0}', env.ARTIFACTS_AWS_ACCESS_KEY_ID)] }}"
+        if: "success() && !env.SKIP_JOB && (github.event_name == 'push' || env.DEPLOY == '1' || env.DEPLOY_ALT == '1')"
+        shell: "python src/ci/scripts/exec.py {0}"
+  pietro:
+    name: pietro
+    env:
+      CI_JOB_NAME: "${{ matrix.name }}"
+      SCCACHE_BUCKET: rust-lang-gha-caches
+      DEPLOY_BUCKET: rust-lang-gha
+      TOOLSTATE_REPO: "https://github.com/pietroalbini/rust-toolstate"
+      TOOLSTATE_ISSUES_API_URL: "https://api.github.com/repos/pietroalbini/rust-toolstate/issues"
+      TOOLSTATE_PUBLISH: 1
+      CACHES_AWS_ACCESS_KEY_ID: AKIA46X5W6CZOMUQATD5
+      ARTIFACTS_AWS_ACCESS_KEY_ID: AKIA46X5W6CZH5AYXDVF
+    if: "github.event_name == 'push' && github.ref == 'refs/heads/expand-yaml-anchors'"
+    strategy:
+      matrix:
+        name:
+          - mingw-check
+          - x86_64-mingw-1
+          - x86_64-msvc-1
+        include:
+          - name: mingw-check
+            os: ubuntu-latest-xl
+            env: {}
+          - name: x86_64-mingw-1
+            env:
+              SCRIPT: make ci-mingw-subset-1
+              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-gnu"
+              CUSTOM_MINGW: 1
+              NO_DEBUG_ASSERTIONS: 1
+              NO_LLVM_ASSERTIONS: 1
+            os: windows-latest-xl
+          - name: x86_64-msvc-1
+            env:
+              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --enable-profiler"
+              SCRIPT: make ci-subset-1
+              NO_DEBUG_ASSERTIONS: 1
+              NO_LLVM_ASSERTIONS: 1
+            os: windows-latest-xl
+    timeout-minutes: 600
+    runs-on: "${{ matrix.os }}"
+    steps:
+      - name: disable git crlf conversion
+        run: git config --global core.autocrlf false
+        shell: bash
+      - name: checkout the source code
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 2
+      - name: configure GitHub Actions to kill the build when outdated
+        uses: rust-lang/simpleinfra/github-actions/cancel-outdated-builds@master
+        with:
+          github_token: "${{ secrets.github_token }}"
+        if: success() && !env.SKIP_JOB
+      - name: add extra environment variables
         run: src/ci/scripts/setup-environment.sh
         env:
           EXTRA_VARIABLES: "${{ toJson(matrix.env) }}"
@@ -166,7 +314,6 @@ jobs:
     name: try
     env:
       CI_JOB_NAME: "${{ matrix.name }}"
-      CI_OVERRIDE_SHELL: bash
       SCCACHE_BUCKET: rust-lang-gha-caches
       DEPLOY_BUCKET: rust-lang-gha
       TOOLSTATE_REPO: "https://github.com/pietroalbini/rust-toolstate"
@@ -203,7 +350,7 @@ jobs:
         with:
           github_token: "${{ secrets.github_token }}"
         if: success() && !env.SKIP_JOB
-      - name: add extra enviornment variables
+      - name: add extra environment variables
         run: src/ci/scripts/setup-environment.sh
         env:
           EXTRA_VARIABLES: "${{ toJson(matrix.env) }}"
@@ -304,7 +451,6 @@ jobs:
     name: auto
     env:
       CI_JOB_NAME: "${{ matrix.name }}"
-      CI_OVERRIDE_SHELL: bash
       SCCACHE_BUCKET: rust-lang-gha-caches
       DEPLOY_BUCKET: rust-lang-gha
       TOOLSTATE_REPO: "https://github.com/pietroalbini/rust-toolstate"
@@ -607,7 +753,7 @@ jobs:
         with:
           github_token: "${{ secrets.github_token }}"
         if: success() && !env.SKIP_JOB
-      - name: add extra enviornment variables
+      - name: add extra environment variables
         run: src/ci/scripts/setup-environment.sh
         env:
           EXTRA_VARIABLES: "${{ toJson(matrix.env) }}"

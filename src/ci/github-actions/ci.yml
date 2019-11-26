@@ -33,7 +33,6 @@ x--expand-yaml-anchors--remove:
 
   - &shared-ci-variables
     CI_JOB_NAME: ${{ matrix.name }}
-    CI_OVERRIDE_SHELL: bash
 
   - &public-variables
     SCCACHE_BUCKET: rust-lang-gha-caches
@@ -95,7 +94,7 @@ x--expand-yaml-anchors--remove:
           github_token: "${{ secrets.github_token }}"
         <<: *step
 
-      - name: add extra enviornment variables
+      - name: add extra environment variables
         run: src/ci/scripts/setup-environment.sh
         env:
           # Since it's not possible to merge `${{ matrix.env }}` with the other
@@ -246,6 +245,41 @@ jobs:
             env:
               CI_ONLY_WHEN_SUBMODULES_CHANGED: 1
             <<: *job-linux-xl
+
+  pietro:
+    <<: *base-ci-job
+    name: pietro
+    env:
+      <<: [*shared-ci-variables, *prod-variables]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/expand-yaml-anchors'
+    strategy:
+      matrix:
+        name:
+          - mingw-check
+          - x86_64-mingw-1
+          - x86_64-msvc-1
+        include:
+          - name: mingw-check
+            <<: *job-linux-xl
+
+          - name: x86_64-mingw-1
+            env:
+              SCRIPT: make ci-mingw-subset-1
+              RUST_CONFIGURE_ARGS: --build=x86_64-pc-windows-gnu
+              CUSTOM_MINGW: 1
+              # FIXME(#59637)
+              NO_DEBUG_ASSERTIONS: 1
+              NO_LLVM_ASSERTIONS: 1
+            <<: *job-windows-xl
+
+          - name: x86_64-msvc-1
+            env:
+              RUST_CONFIGURE_ARGS: --build=x86_64-pc-windows-msvc --enable-profiler
+              SCRIPT: make ci-subset-1
+              # FIXME(#59637)
+              NO_DEBUG_ASSERTIONS: 1
+              NO_LLVM_ASSERTIONS: 1
+            <<: *job-windows-xl
 
   try:
     <<: *base-ci-job
