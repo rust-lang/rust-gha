@@ -33,7 +33,7 @@ x--expand-yaml-anchors--remove:
 
   - &shared-ci-variables
     CI_JOB_NAME: ${{ matrix.name }}
-    CI_SHELL: bash
+    CI_OVERRIDE_SHELL: bash
 
   - &public-variables
     SCCACHE_BUCKET: rust-lang-gha-caches
@@ -55,7 +55,6 @@ x--expand-yaml-anchors--remove:
 
   - &base-job
     env: {}
-    custom_msys: /bin/bash
 
   - &job-linux-xl
     os: ubuntu-latest-xl
@@ -67,7 +66,6 @@ x--expand-yaml-anchors--remove:
 
   - &job-windows-xl
     os: windows-latest-xl
-    custom_msys: ${{ format("{}/msys2/usr/bin/bash.exe", env.GITHUB_WORKSPACE) }}
     <<: *base-job
 
   - &step
@@ -75,7 +73,7 @@ x--expand-yaml-anchors--remove:
 
   - &step-run
     <<: *step
-    shell: ${{ env.CI_SHELL }}
+    shell: "src/ci/scripts/exec.py {0}"
 
   - &base-ci-job
     timeout-minutes: 600
@@ -84,13 +82,12 @@ x--expand-yaml-anchors--remove:
     steps:
       - name: disable git crlf conversion
         run: git config --global core.autocrlf false
-        <<: *step-run
+        shell: bash
 
       - name: checkout the source code
         uses: actions/checkout@v1
         with:
           fetch-depth: 2
-        <<: *step
 
       - name: configure GitHub Actions to kill the build when outdated
         uses: rust-lang/simpleinfra/github-actions/cancel-outdated-builds@master
