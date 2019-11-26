@@ -73,7 +73,7 @@ x--expand-yaml-anchors--remove:
 
   - &step-run
     <<: *step
-    shell: "src/ci/scripts/exec.py {0}"
+    shell: python src/ci/scripts/exec.py {0}
 
   - &base-ci-job
     timeout-minutes: 600
