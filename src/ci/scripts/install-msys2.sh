@@ -16,4 +16,7 @@ if isWindows; then
     mkdir -p "$(ciCheckoutPath)/msys2/home/${USERNAME}"
 
     ciCommandAddPath "$(ciCheckoutPath)/msys2/usr/bin"
+
+    echo "switching shell to use our own bash"
+    ciCommandSetEnv CI_OVERRIDE_SHELL "$(ciCheckoutPath)/msys2/usr/bin/bash.exe"
 fi
