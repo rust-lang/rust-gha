@@ -251,7 +251,7 @@ jobs:
     name: pietro
     env:
       <<: [*shared-ci-variables, *prod-variables]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/expand-yaml-anchors'
+    if: github.event_name == 'push'
     strategy:
       matrix:
         name:
