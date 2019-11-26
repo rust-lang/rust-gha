@@ -6,7 +6,7 @@ IFS=$'\n\t'
 source "$(cd "$(dirname "$0")" && pwd)/../shared.sh"
 
 if isWindows; then
-    pacman -S --noconfirm --needed base-devel ca-certificates make diffutils tar
+    msys2-dll-fix pacman -S --noconfirm --needed base-devel ca-certificates make diffutils tar
 
     # Make sure we use the native python interpreter instead of some msys equivalent
     # one way or another. The msys interpreters seem to have weird path conversions

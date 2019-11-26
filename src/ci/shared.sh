@@ -26,6 +26,16 @@ function retry {
   done
 }
 
+# This function is a wrapper that executes the provided command avoiding cygwin
+# DLL mismatch errors.
+#
+# https://travis-ci.community/t/how-do-i-use-mingw-and-msys2-shells/1787/3
+function msys2-dll-fix {
+    command="$@"
+    "$(ciCheckoutPath)/msys2/msys2_shell.cmd" -defterm -mingw64 -no-start -full-path -here \
+        -c "${command}"
+}
+
 function isCI {
     [[ "${CI-false}" = "true" ]] || isAzurePipelines || isGitHubActions
 }
