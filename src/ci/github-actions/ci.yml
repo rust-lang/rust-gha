@@ -223,50 +223,6 @@ on:
       - "**"
 
 jobs:
-  pr:
-    <<: *base-ci-job
-    name: PR
-    env:
-      <<: [*shared-ci-variables, *public-variables]
-    if: github.event_name == 'pull_request'
-    strategy:
-      matrix:
-        name:
-          - mingw-check
-          - x86_64-gnu-llvm-6.0
-          - x86_64-gnu-tools
-        include:
-          - name: mingw-check
-            <<: *job-linux-xl
-
-          - name: x86_64-gnu-llvm-6.0
-            <<: *job-linux-xl
-
-          - name: x86_64-gnu-tools
-            env:
-              CI_ONLY_WHEN_SUBMODULES_CHANGED: 1
-            <<: *job-linux-xl
-
-  try:
-    <<: *base-ci-job
-    name: try
-    env:
-      <<: [*shared-ci-variables, *prod-variables]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/try'
-    strategy:
-      matrix:
-        name:
-          - dist-x86_64-linux
-          - dist-x86_64-linux-alt
-        include:
-          - name: dist-x86_64-linux
-            <<: *job-linux-xl
-
-          - name: dist-x86_64-linux-alt
-            env:
-              IMAGE: dist-x86_64-linux
-            <<: *job-linux-xl
-
   auto:
     <<: *base-ci-job
     name: auto
@@ -292,21 +248,3 @@ jobs:
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
             <<: *job-windows-xl
-
-  master:
-    name: master
-    runs-on: ubuntu-latest
-    env:
-      <<: [*prod-variables]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
-    steps:
-      - name: checkout the source code
-        uses: actions/checkout@v1
-        with:
-          fetch-depth: 2
-
-      - name: publish toolstate
-        run: src/ci/scripts/publish-toolstate.sh
-        env:
-          TOOLSTATE_REPO_ACCESS_TOKEN: ${{ secrets.TOOLSTATE_REPO_ACCESS_TOKEN }}
-        <<: *step-run
