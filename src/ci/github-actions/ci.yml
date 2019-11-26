@@ -67,11 +67,7 @@ x--expand-yaml-anchors--remove:
     os: windows-latest-xl
     <<: *base-job
 
-  - &step
-    if: success() && !env.SKIP_JOB
-
   - &step-run
-    <<: *step
     shell: bash
 
   - &base-ci-job
@@ -83,7 +79,6 @@ x--expand-yaml-anchors--remove:
         uses: rust-lang/simpleinfra/github-actions/cancel-outdated-builds@master
         with:
           github_token: "${{ secrets.github_token }}"
-        <<: *step
 
       - name: disable git crlf conversion
         run: git config --global core.autocrlf false
@@ -93,7 +88,6 @@ x--expand-yaml-anchors--remove:
         uses: actions/checkout@v1
         with:
           fetch-depth: 2
-        <<: *step
 
       - name: add extra enviornment variables
         run: src/ci/scripts/setup-environment.sh
@@ -204,7 +198,6 @@ x--expand-yaml-anchors--remove:
         # adding the condition is helpful as this way CI will not silently skip
         # deploying artifacts from a dist builder if the variables are misconfigured,
         # erroring about invalid credentials instead.
-        if: success() && !env.SKIP_JOB && (github.event_name == 'push' || env.DEPLOY == '1' || env.DEPLOY_ALT == '1')
         <<: *step-run
 
 ###########################
