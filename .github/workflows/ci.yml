@@ -1,10 +1,7 @@
 on: [push]
 jobs:
   repro:
-    strategy:
-      matrix:
-        foo: [bar]
-    runs-on: "${{ matrix.os }}"
+    runs-on: ""
     steps:
       - run: echo bug
         shell: bash
