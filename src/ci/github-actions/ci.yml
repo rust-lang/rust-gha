@@ -278,22 +278,11 @@ jobs:
       fail-fast: false
       matrix:
         name:
-          - dist-i686-msvc
-          - i686-msvc-1
           - i686-msvc-2
         include:
           ######################
           #  Windows Builders  #
           ######################
-
-          - name: i686-msvc-1
-            env:
-              RUST_CONFIGURE_ARGS: --build=i686-pc-windows-msvc
-              SCRIPT: make ci-subset-1
-              # FIXME(#59637)
-              NO_DEBUG_ASSERTIONS: 1
-              NO_LLVM_ASSERTIONS: 1
-            <<: *job-windows-xl
 
           - name: i1686-msvc-2
             env:
@@ -302,17 +291,6 @@ jobs:
               # FIXME(#59637)
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
-            <<: *job-windows-xl
-
-          - name: dist-i686-msvc
-            env:
-              RUST_CONFIGURE_ARGS: >-
-                --build=i686-pc-windows-msvc
-                --target=i586-pc-windows-msvc
-                --enable-full-tools
-                --enable-profiler
-              SCRIPT: python x.py dist
-              DIST_REQUIRE_ALL_TOOLS: 1
             <<: *job-windows-xl
 
   master:
