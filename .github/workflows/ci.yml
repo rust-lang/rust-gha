@@ -318,35 +318,10 @@ jobs:
       fail-fast: false
       matrix:
         name:
-          - dist-i686-mingw
           - dist-i686-msvc
-          - dist-x86_64-mingw
-          - dist-x86_64-msvc
-          - dist-x86_64-msvc-alt
-          - i686-mingw-1
-          - i686-mingw-2
           - i686-msvc-1
           - i686-msvc-2
-          - x86_64-mingw-1
-          - x86_64-mingw-2
-          - x86_64-msvc-1
-          - x86_64-msvc-2
-          - x86_64-msvc-aux
-          - x86_64-msvc-cargo
-          - x86_64-msvc-tools
         include:
-          - name: x86_64-msvc-1
-            env:
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --enable-profiler"
-              SCRIPT: make ci-subset-1
-              NO_DEBUG_ASSERTIONS: 1
-              NO_LLVM_ASSERTIONS: 1
-            os: windows-latest-xl
-          - name: x86_64-msvc-2
-            env:
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --enable-profiler"
-              SCRIPT: make ci-subset-2
-            os: windows-latest-xl
           - name: i686-msvc-1
             env:
               RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-msvc"
@@ -361,82 +336,11 @@ jobs:
               NO_DEBUG_ASSERTIONS: 1
               NO_LLVM_ASSERTIONS: 1
             os: windows-latest-xl
-          - name: x86_64-msvc-aux
-            env:
-              RUST_CHECK_TARGET: check-aux EXCLUDE_CARGO=1
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc"
-            os: windows-latest-xl
-          - name: x86_64-msvc-cargo
-            env:
-              SCRIPT: python x.py test src/tools/cargotest src/tools/cargo
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc"
-              VCVARS_BAT: vcvars64.bat
-              NO_DEBUG_ASSERTIONS: 1
-              NO_LLVM_ASSERTIONS: 1
-            os: windows-latest-xl
-          - name: x86_64-msvc-tools
-            env:
-              SCRIPT: src/ci/docker/x86_64-gnu-tools/checktools.sh x.py /tmp/toolstate/toolstates.json windows
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --save-toolstates=/tmp/toolstate/toolstates.json"
-            os: windows-latest-xl
-          - name: i686-mingw-1
-            env:
-              RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-gnu"
-              SCRIPT: make ci-mingw-subset-1
-              CUSTOM_MINGW: 1
-              NO_DEBUG_ASSERTIONS: 1
-              NO_LLVM_ASSERTIONS: 1
-            os: windows-latest-xl
-          - name: i686-mingw-2
-            env:
-              RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-gnu"
-              SCRIPT: make ci-mingw-subset-2
-              CUSTOM_MINGW: 1
-            os: windows-latest-xl
-          - name: x86_64-mingw-1
-            env:
-              SCRIPT: make ci-mingw-subset-1
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-gnu"
-              CUSTOM_MINGW: 1
-              NO_DEBUG_ASSERTIONS: 1
-              NO_LLVM_ASSERTIONS: 1
-            os: windows-latest-xl
-          - name: x86_64-mingw-2
-            env:
-              SCRIPT: make ci-mingw-subset-2
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-gnu"
-              CUSTOM_MINGW: 1
-            os: windows-latest-xl
-          - name: dist-x86_64-msvc
-            env:
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --target=x86_64-pc-windows-msvc,aarch64-pc-windows-msvc --enable-full-tools --enable-profiler"
-              SCRIPT: python x.py dist
-              DIST_REQUIRE_ALL_TOOLS: 1
-            os: windows-latest-xl
           - name: dist-i686-msvc
             env:
               RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-msvc --target=i586-pc-windows-msvc --enable-full-tools --enable-profiler"
               SCRIPT: python x.py dist
               DIST_REQUIRE_ALL_TOOLS: 1
-            os: windows-latest-xl
-          - name: dist-i686-mingw
-            env:
-              RUST_CONFIGURE_ARGS: "--build=i686-pc-windows-gnu --enable-full-tools --enable-profiler"
-              SCRIPT: python x.py dist
-              CUSTOM_MINGW: 1
-              DIST_REQUIRE_ALL_TOOLS: 1
-            os: windows-latest-xl
-          - name: dist-x86_64-mingw
-            env:
-              SCRIPT: python x.py dist
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-gnu --enable-full-tools --enable-profiler"
-              CUSTOM_MINGW: 1
-              DIST_REQUIRE_ALL_TOOLS: 1
-            os: windows-latest-xl
-          - name: dist-x86_64-msvc-alt
-            env:
-              RUST_CONFIGURE_ARGS: "--build=x86_64-pc-windows-msvc --enable-extended --enable-profiler"
-              SCRIPT: python x.py dist
             os: windows-latest-xl
     timeout-minutes: 600
     runs-on: "${{ matrix.os }}"

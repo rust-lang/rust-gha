@@ -278,10 +278,7 @@ jobs:
       fail-fast: false
       matrix:
         name:
-          - dist-i686-mingw
           - dist-i686-msvc
-          - i686-mingw-1
-          - i686-mingw-2
           - i686-msvc-1
           - i686-msvc-2
         include:
@@ -307,37 +304,6 @@ jobs:
               NO_LLVM_ASSERTIONS: 1
             <<: *job-windows-xl
 
-          # 32/64-bit MinGW builds.
-          #
-          # We are using MinGW with posix threads since LLVM does not compile with
-          # the win32 threads version due to missing support for C++'s std::thread.
-          #
-          # Instead of relying on the MinGW version installed on appveryor we download
-          # and install one ourselves so we won't be surprised by changes to appveyor's
-          # build image.
-          #
-          # Finally, note that the downloads below are all in the `rust-lang-ci` S3
-          # bucket, but they cleraly didn't originate there! The downloads originally
-          # came from the mingw-w64 SourceForge download site. Unfortunately
-          # SourceForge is notoriously flaky, so we mirror it on our own infrastructure.
-
-          - name: i686-mingw-1
-            env:
-              RUST_CONFIGURE_ARGS: --build=i686-pc-windows-gnu
-              SCRIPT: make ci-mingw-subset-1
-              CUSTOM_MINGW: 1
-              # FIXME(#59637)
-              NO_DEBUG_ASSERTIONS: 1
-              NO_LLVM_ASSERTIONS: 1
-            <<: *job-windows-xl
-
-          - name: i686-mingw-2
-            env:
-              RUST_CONFIGURE_ARGS: --build=i686-pc-windows-gnu
-              SCRIPT: make ci-mingw-subset-2
-              CUSTOM_MINGW: 1
-            <<: *job-windows-xl
-
           - name: dist-i686-msvc
             env:
               RUST_CONFIGURE_ARGS: >-
@@ -346,14 +312,6 @@ jobs:
                 --enable-full-tools
                 --enable-profiler
               SCRIPT: python x.py dist
-              DIST_REQUIRE_ALL_TOOLS: 1
-            <<: *job-windows-xl
-
-          - name: dist-i686-mingw
-            env:
-              RUST_CONFIGURE_ARGS: --build=i686-pc-windows-gnu --enable-full-tools --enable-profiler
-              SCRIPT: python x.py dist
-              CUSTOM_MINGW: 1
               DIST_REQUIRE_ALL_TOOLS: 1
             <<: *job-windows-xl
 
