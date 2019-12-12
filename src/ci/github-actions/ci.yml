@@ -139,10 +139,6 @@ x--expand-yaml-anchors--remove:
         run: src/ci/scripts/install-clang.sh
         <<: *step-run
 
-      - name: switch xcode version
-        run: src/ci/scripts/switch-xcode.sh
-        <<: *step-run
-
       - name: install WIX
         run: src/ci/scripts/install-wix.sh
         <<: *step-run
@@ -308,6 +304,8 @@ jobs:
           - dist-s390x-linux
           - dist-various-1
           - dist-various-2
+          - dist-x86_64-apple
+          - dist-x86_64-apple-alt
           - dist-x86_64-freebsd
           - dist-x86_64-linux
           - dist-x86_64-linux-alt
@@ -325,6 +323,7 @@ jobs:
           - mingw-check
           - test-various
           - wasm32
+          - x86_64-apple
           - x86_64-gnu
           - x86_64-gnu-aux
           - x86_64-gnu-debug
@@ -464,6 +463,42 @@ jobs:
             env:
               DEPLOY_TOOLSTATES_JSON: toolstates-linux.json
             <<: *job-linux-xl
+
+          ####################
+          #  macOS Builders  #
+          ####################
+
+          - name: dist-x86_64-apple
+            env:
+              SCRIPT: ./x.py dist
+              RUST_CONFIGURE_ARGS: --target=aarch64-apple-ios,x86_64-apple-ios --enable-full-tools --enable-sanitizers --enable-profiler --set rust.jemalloc
+              RUSTC_RETRY_LINKER_ON_SEGFAULT: 1
+              MACOSX_DEPLOYMENT_TARGET: 10.7
+              NO_LLVM_ASSERTIONS: 1
+              NO_DEBUG_ASSERTIONS: 1
+              DIST_REQUIRE_ALL_TOOLS: 1
+            <<: *job-macos-xl
+
+          - name: dist-x86_64-apple-alt
+            env:
+              SCRIPT: ./x.py dist
+              RUST_CONFIGURE_ARGS: --enable-extended --enable-profiler --set rust.jemalloc
+              RUSTC_RETRY_LINKER_ON_SEGFAULT: 1
+              MACOSX_DEPLOYMENT_TARGET: 10.7
+              NO_LLVM_ASSERTIONS: 1
+              NO_DEBUG_ASSERTIONS: 1
+            <<: *job-macos-xl
+
+          - name: x86_64-apple
+            env:
+              SCRIPT: ./x.py test
+              RUST_CONFIGURE_ARGS: --build=x86_64-apple-darwin --enable-sanitizers --enable-profiler --set rust.jemalloc
+              RUSTC_RETRY_LINKER_ON_SEGFAULT: 1
+              MACOSX_DEPLOYMENT_TARGET: 10.8
+              MACOSX_STD_DEPLOYMENT_TARGET: 10.7
+              NO_LLVM_ASSERTIONS: 1
+              NO_DEBUG_ASSERTIONS: 1
+            <<: *job-macos-xl
 
           ######################
           #  Windows Builders  #
