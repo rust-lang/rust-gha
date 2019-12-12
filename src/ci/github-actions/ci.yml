@@ -280,6 +280,7 @@ jobs:
       <<: [*shared-ci-variables, *prod-variables]
     if: github.event_name == 'push' && github.ref == 'refs/heads/auto'
     strategy:
+      fail-fast: false
       matrix:
         name:
           - arm-android

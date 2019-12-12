@@ -303,6 +303,7 @@ jobs:
       ARTIFACTS_AWS_ACCESS_KEY_ID: AKIA46X5W6CZH5AYXDVF
     if: "github.event_name == 'push' && github.ref == 'refs/heads/auto'"
     strategy:
+      fail-fast: false
       matrix:
         name:
           - arm-android
