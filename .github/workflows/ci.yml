@@ -102,10 +102,6 @@ jobs:
         run: src/ci/scripts/install-innosetup.sh
         shell: "python src/ci/exec-with-shell.py {0}"
         if: success() && !env.SKIP_JOB
-      - name: "ensure builds happens inside of C: instead of D:"
-        run: src/ci/scripts/windows-symlink-build-dir.sh
-        shell: "python src/ci/exec-with-shell.py {0}"
-        if: success() && !env.SKIP_JOB
       - name: disable git crlf conversion
         run: src/ci/scripts/disable-git-crlf-conversion.sh
         shell: "python src/ci/exec-with-shell.py {0}"
@@ -233,10 +229,6 @@ jobs:
         if: success() && !env.SKIP_JOB
       - name: install InnoSetup
         run: src/ci/scripts/install-innosetup.sh
-        shell: "python src/ci/exec-with-shell.py {0}"
-        if: success() && !env.SKIP_JOB
-      - name: "ensure builds happens inside of C: instead of D:"
-        run: src/ci/scripts/windows-symlink-build-dir.sh
         shell: "python src/ci/exec-with-shell.py {0}"
         if: success() && !env.SKIP_JOB
       - name: disable git crlf conversion
@@ -664,10 +656,6 @@ jobs:
         if: success() && !env.SKIP_JOB
       - name: install InnoSetup
         run: src/ci/scripts/install-innosetup.sh
-        shell: "python src/ci/exec-with-shell.py {0}"
-        if: success() && !env.SKIP_JOB
-      - name: "ensure builds happens inside of C: instead of D:"
-        run: src/ci/scripts/windows-symlink-build-dir.sh
         shell: "python src/ci/exec-with-shell.py {0}"
         if: success() && !env.SKIP_JOB
       - name: disable git crlf conversion

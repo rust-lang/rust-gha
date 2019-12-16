@@ -147,10 +147,6 @@ x--expand-yaml-anchors--remove:
         run: src/ci/scripts/install-innosetup.sh
         <<: *step-run
 
-      - name: "ensure builds happens inside of C: instead of D:"
-        run: src/ci/scripts/windows-symlink-build-dir.sh
-        <<: *step-run
-
       - name: disable git crlf conversion
         run: src/ci/scripts/disable-git-crlf-conversion.sh
         <<: *step-run
