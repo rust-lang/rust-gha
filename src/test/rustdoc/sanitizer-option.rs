@@ -1,4 +1,5 @@
 // needs-sanitizer-support
+// ignore-aarch64
 // compile-flags: --test -Z sanitizer=address
 //
 // #43031: Verify that rustdoc passes `-Z` options to rustc. Use an extern

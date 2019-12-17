@@ -1,4 +1,5 @@
 # needs-sanitizer-support
+# ignore-aarch64
 
 -include ../tools.mk
 

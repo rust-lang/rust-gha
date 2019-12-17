@@ -19,6 +19,7 @@ name: CI
   push:
     branches:
       - auto
+      - auto-arm64
       - try
       - master
   pull_request:
@@ -293,68 +294,12 @@ jobs:
       TOOLSTATE_PUBLISH: 1
       CACHES_AWS_ACCESS_KEY_ID: AKIA46X5W6CZOMUQATD5
       ARTIFACTS_AWS_ACCESS_KEY_ID: AKIA46X5W6CZH5AYXDVF
-    if: "github.event_name == 'push' && github.ref == 'refs/heads/auto'"
+    if: "github.event_name == 'push' && github.ref == 'refs/heads/auto-arm64'"
     strategy:
       fail-fast: false
       matrix:
         name:
-          - arm-android
-          - armhf-gnu
-          - dist-aarch64-linux
-          - dist-android
-          - dist-arm-linux
-          - dist-armhf-linux
-          - dist-armv7-linux
-          - dist-i586-gnu-i586-i686-musl
-          - dist-i686-freebsd
-          - dist-i686-linux
-          - dist-i686-mingw
-          - dist-i686-msvc
-          - dist-mips-linux
-          - dist-mips64-linux
-          - dist-mips64el-linux
-          - dist-mipsel-linux
-          - dist-powerpc-linux
-          - dist-powerpc64-linux
-          - dist-powerpc64le-linux
-          - dist-s390x-linux
-          - dist-various-1
-          - dist-various-2
-          - dist-x86_64-apple
-          - dist-x86_64-apple-alt
-          - dist-x86_64-freebsd
-          - dist-x86_64-linux
-          - dist-x86_64-linux-alt
-          - dist-x86_64-mingw
-          - dist-x86_64-msvc
-          - dist-x86_64-msvc-alt
-          - dist-x86_64-musl
-          - dist-x86_64-netbsd
-          - i686-gnu
-          - i686-gnu-nopt
-          - i686-mingw-1
-          - i686-mingw-2
-          - i686-msvc-1
-          - i686-msvc-2
-          - mingw-check
-          - test-various
-          - wasm32
-          - x86_64-apple
-          - x86_64-gnu
-          - x86_64-gnu-aux
-          - x86_64-gnu-debug
-          - x86_64-gnu-distcheck
-          - x86_64-gnu-full-bootstrap
-          - x86_64-gnu-llvm-7
-          - x86_64-gnu-nopt
-          - x86_64-gnu-tools
-          - x86_64-mingw-1
-          - x86_64-mingw-2
-          - x86_64-msvc-1
-          - x86_64-msvc-2
-          - x86_64-msvc-aux
-          - x86_64-msvc-cargo
-          - x86_64-msvc-tools
+          - arm64-gnu
         include:
           - name: arm-android
             os: ubuntu-latest-xl
@@ -473,6 +418,9 @@ jobs:
             env:
               DEPLOY_TOOLSTATES_JSON: toolstates-linux.json
             os: ubuntu-latest-xl
+          - name: arm64-gnu
+            os: self-hosted
+            env: {}
           - name: dist-x86_64-apple
             env:
               SCRIPT: "./x.py dist"

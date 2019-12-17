@@ -1,6 +1,8 @@
 // run-pass
+
 #![allow(non_camel_case_types)]
 
+// ignore-aarch64 FIXME trips an LLVM assert
 // ignore-emscripten
 // min-system-llvm-version: 9.0
 

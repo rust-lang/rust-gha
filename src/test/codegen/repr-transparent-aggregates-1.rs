@@ -7,6 +7,7 @@
 // ignore-mips64
 // ignore-powerpc
 // ignore-powerpc64
+// ignore-aarch64
 // ignore-windows
 // See repr-transparent.rs
 

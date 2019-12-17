@@ -1,5 +1,7 @@
 // run-pass
 // ignore-wasm32-bare no libc to test ffi with
+// ignore-aarch64 FIXME trips an LLVM assertion
+
 #![feature(c_variadic)]
 
 use std::ffi::VaList;
